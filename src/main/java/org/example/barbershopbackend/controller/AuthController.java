@@ -16,10 +16,14 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<String> signup(@RequestParam String email,
-                                         @RequestParam String password) {
+    public ResponseEntity<String> signup(
+            @RequestParam String name,
+            @RequestParam String phoneNumber,
+            @RequestParam String email,
+            @RequestParam String password) {
+
         try {
-            String msg = authService.signup(email, password);
+            String msg = authService.signup(name, phoneNumber, email, password);
             return ResponseEntity.ok(msg);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -27,8 +31,10 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestParam String email,
-                                        @RequestParam String password) {
+    public ResponseEntity<String> login(
+            @RequestParam String email,
+            @RequestParam String password) {
+
         try {
             String msg = authService.login(email, password);
             return ResponseEntity.ok(msg);

@@ -2,23 +2,33 @@ package org.example.barbershopbackend.service;
 
 import org.example.barbershopbackend.model.User;
 import org.example.barbershopbackend.repository.UserRepository;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AuthService {
 
     private final UserRepository userRepo;
+    private final BCryptPasswordEncoder passwordEncoder;
 
-    public AuthService(UserRepository userRepo) {
+    public AuthService(UserRepository userRepo,
+                       BCryptPasswordEncoder passwordEncoder) {
         this.userRepo = userRepo;
+        this.passwordEncoder = passwordEncoder;
     }
 
-    public String signup(String email, String password) throws Exception {
+    public String signup(String name,
+                         String phoneNumber,
+                         String email,
+                         String password) throws Exception {
+
         if (userRepo.findByEmail(email) != null) {
             throw new Exception("Email already exists");
         }
 
-        User user = new User(email, password);
+        String encodedPassword = passwordEncoder.encode(password);
+
+        User user = new User(name, phoneNumber, email, encodedPassword);
         userRepo.save(user);
 
         return "Signup successful";
@@ -31,7 +41,7 @@ public class AuthService {
             throw new Exception("User not found");
         }
 
-        if (!user.getPassword().equals(password)) {
+        if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new Exception("Incorrect password");
         }
 
