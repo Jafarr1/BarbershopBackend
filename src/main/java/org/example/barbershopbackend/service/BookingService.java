@@ -1,6 +1,7 @@
 package org.example.barbershopbackend.service;
 
 import org.example.barbershopbackend.model.Booking;
+import org.example.barbershopbackend.model.BookingStatus;
 import org.example.barbershopbackend.model.ServiceType;
 import org.example.barbershopbackend.model.User;
 import org.example.barbershopbackend.repository.BookingRepository;
@@ -30,6 +31,10 @@ public class BookingService {
             serviceType = ServiceType.valueOf(service.toUpperCase());
         } catch (IllegalArgumentException e) {
             throw new Exception("Invalid service type");
+        }
+
+        if (bookingRepo.existsByAppointmentTimeAndStatus(time, BookingStatus.BOOKED)) {
+            throw new Exception("Time slot already booked");
         }
 
         Booking booking = new Booking(user, time, serviceType);

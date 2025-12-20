@@ -19,7 +19,8 @@ public class Booking {
     @Enumerated(EnumType.STRING)
     private ServiceType service;
 
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private BookingStatus status;
 
     public Booking() {}
 
@@ -27,7 +28,7 @@ public class Booking {
         this.user = user;
         this.appointmentTime = appointmentTime;
         this.service = service;
-        this.status = "BOOKED";
+        this.status = BookingStatus.BOOKED;
     }
 
     public Long getBookingId() {
@@ -46,7 +47,7 @@ public class Booking {
         return service;
     }
 
-    public String getStatus() {
+    public BookingStatus getStatus() {
         return status;
     }
 
