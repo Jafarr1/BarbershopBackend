@@ -22,7 +22,7 @@ public class BookingService {
         this.userRepo = userRepo;
     }
 
-    public Booking createBooking(Long userId, LocalDateTime time, String service) throws Exception {
+    public Booking createBooking(Long userId, LocalDateTime time, String service, String barber) throws Exception {
         User user = userRepo.findById(userId)
                 .orElseThrow(() -> new Exception("User not found"));
 
@@ -37,7 +37,7 @@ public class BookingService {
             throw new Exception("Time slot already booked");
         }
 
-        Booking booking = new Booking(user, time, serviceType);
+        Booking booking = new Booking(user, time, serviceType, barber);
         return bookingRepo.save(booking);
     }
 

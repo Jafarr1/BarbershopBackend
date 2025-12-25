@@ -24,11 +24,13 @@ public class BookingController {
     @PostMapping("/create")
     public Booking createBooking(@RequestParam Long userId,
                                  @RequestParam String time,
-                                 @RequestParam String service) throws Exception {
+                                 @RequestParam String service,
+                                 @RequestParam String barber) throws Exception {
 
         LocalDateTime dateTime = LocalDateTime.parse(time);
-        return bookingService.createBooking(userId, dateTime, service);
+        return bookingService.createBooking(userId, dateTime, service, barber);
     }
+
 
     @GetMapping("/user/{userId}")
     public List<Booking> getUserBookings(@PathVariable Long userId) {
