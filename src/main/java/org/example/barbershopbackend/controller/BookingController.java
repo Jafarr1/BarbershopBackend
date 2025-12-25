@@ -2,6 +2,7 @@ package org.example.barbershopbackend.controller;
 
 import org.example.barbershopbackend.model.Booking;
 import org.example.barbershopbackend.service.BookingService;
+import org.example.barbershopbackend.service.TimeSlotService;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -13,9 +14,11 @@ import java.util.List;
 public class BookingController {
 
     private final BookingService bookingService;
+    private final TimeSlotService timeSlotService;
 
-    public BookingController(BookingService bookingService) {
+    public BookingController(BookingService bookingService, TimeSlotService timeSlotService) {
         this.bookingService = bookingService;
+        this.timeSlotService = timeSlotService;
     }
 
     @PostMapping("/create")
@@ -31,4 +34,11 @@ public class BookingController {
     public List<Booking> getUserBookings(@PathVariable Long userId) {
         return bookingService.getUserBookings(userId);
     }
+
+    @GetMapping("/available-slots")
+    public List<String> getAvailableSlots(@RequestParam String barber) {
+        return timeSlotService.getAvailableSlots(barber);
+    }
+
+
 }
