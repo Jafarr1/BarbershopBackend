@@ -34,17 +34,13 @@ public class AuthService {
         return "Signup successful";
     }
 
-    public String login(String email, String password) throws Exception {
+
+    public User loginAndGetUser(String email, String password) throws Exception {
         User user = userRepo.findByEmail(email);
 
-        if (user == null) {
-            throw new Exception("User not found");
-        }
+        if (user == null) throw new Exception("User not found");
+        if (!passwordEncoder.matches(password, user.getPassword())) throw new Exception("Incorrect password");
 
-        if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new Exception("Incorrect password");
-        }
-
-        return "Login successful";
+        return user;
     }
 }

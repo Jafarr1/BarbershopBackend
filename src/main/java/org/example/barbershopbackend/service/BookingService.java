@@ -1,6 +1,7 @@
 package org.example.barbershopbackend.service;
 
 import org.example.barbershopbackend.model.Booking;
+import org.example.barbershopbackend.model.BookingStatus;
 import org.example.barbershopbackend.model.ServiceType;
 import org.example.barbershopbackend.model.User;
 import org.example.barbershopbackend.repository.BookingRepository;
@@ -21,7 +22,7 @@ public class BookingService {
         this.userRepo = userRepo;
     }
 
-    public Booking createBooking(Long userId, LocalDateTime time, String service) throws Exception {
+    public Booking createBooking(Long userId, LocalDateTime time, String service, String barber) throws Exception {
         User user = userRepo.findById(userId)
                 .orElseThrow(() -> new Exception("User not found"));
 
@@ -32,7 +33,11 @@ public class BookingService {
             throw new Exception("Invalid service type");
         }
 
-        Booking booking = new Booking(user, time, serviceType);
+        if (bookingRepo.existsByAppointmentTimeAndStatus(time, BookingStatus.BOOKED)) {
+            throw new Exception("Time slot already booked");
+        }
+
+        Booking booking = new Booking(user, time, serviceType, barber);
         return bookingRepo.save(booking);
     }
 

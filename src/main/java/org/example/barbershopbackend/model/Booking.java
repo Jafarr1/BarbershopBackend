@@ -16,18 +16,23 @@ public class Booking {
 
     private LocalDateTime appointmentTime;
 
+    private String barber;
+
     @Enumerated(EnumType.STRING)
     private ServiceType service;
 
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private BookingStatus status;
 
     public Booking() {}
 
-    public Booking(User user, LocalDateTime appointmentTime, ServiceType service) {
+    public Booking(User user, LocalDateTime appointmentTime, ServiceType service, String barber) {
         this.user = user;
         this.appointmentTime = appointmentTime;
         this.service = service;
-        this.status = "BOOKED";
+        this.barber = barber;
+        this.status = BookingStatus.BOOKED;
+
     }
 
     public Long getBookingId() {
@@ -42,11 +47,15 @@ public class Booking {
         return appointmentTime;
     }
 
+    public String getBarber() {
+        return barber;
+    }
+
     public ServiceType getService() {
         return service;
     }
 
-    public String getStatus() {
+    public BookingStatus getStatus() {
         return status;
     }
 
