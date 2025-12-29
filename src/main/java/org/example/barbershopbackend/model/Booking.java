@@ -59,4 +59,7 @@ public class Booking {
         return status;
     }
 
+    public void setStatus(BookingStatus status) {
+        this.status = status;
+    }
 }
