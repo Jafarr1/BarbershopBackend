@@ -1,9 +1,6 @@
 package org.example.barbershopbackend.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
 public class User {
@@ -17,6 +14,10 @@ public class User {
     private String email;
     private String password;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role;
+
     public User() {}
 
     public User(String name, String phoneNumber, String email, String password) {
@@ -24,6 +25,7 @@ public class User {
         this.phoneNumber = phoneNumber;
         this.email = email;
         this.password = password;
+        this.role = Role.USER;
     }
 
     public Long getUserId() {
@@ -44,5 +46,9 @@ public class User {
 
     public String getPassword() {
         return password;
+    }
+
+    public Role getRole() {
+        return role;
     }
 }
