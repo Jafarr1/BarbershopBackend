@@ -5,8 +5,8 @@ import org.example.barbershopbackend.service.AuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
 @CrossOrigin(origins = "*")
+@RestController
 @RequestMapping("/auth")
 public class AuthController {
 
