@@ -64,6 +64,15 @@ public class BookingService {
 
         bookingRepo.delete(booking);
     }
+    public Booking getBookingById(Long id) throws Exception {
+        return bookingRepo.findById(id)
+                .orElseThrow(() -> new Exception("Booking not found"));
+    }
+
+    public Booking updateBooking(Booking booking) {
+        return bookingRepo.save(booking);
+    }
+
 
 
 

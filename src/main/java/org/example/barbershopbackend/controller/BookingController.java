@@ -12,9 +12,9 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/bookings")
-@CrossOrigin(origins = "*")
 public class BookingController {
 
     private final BookingService bookingService;
@@ -70,6 +70,23 @@ public class BookingController {
         }
         bookingService.cancelBooking(id);
     }
+
+    @PutMapping("/{id}/cancel")
+    public void cancelBookingByUser(
+            @PathVariable Long id,
+            @RequestHeader(value = "X-USER-ID") Long userId
+    ) throws Exception {
+        Booking booking = bookingService.getBookingById(id);
+
+        if (!booking.getUser().getUserId().equals(userId)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You can only cancel your own bookings");
+        }
+
+        booking.setStatus(BookingStatus.CANCELLED);
+        bookingService.updateBooking(booking);
+    }
+
+
 
 
 }
