@@ -3,6 +3,7 @@ package org.example.barbershopbackend.controller;
 import org.example.barbershopbackend.model.Booking;
 import org.example.barbershopbackend.model.BookingDTO;
 import org.example.barbershopbackend.model.BookingStatus;
+import org.example.barbershopbackend.security.JwtUtil;
 import org.example.barbershopbackend.service.BookingService;
 import org.example.barbershopbackend.service.TimeSlotService;
 import org.springframework.http.HttpStatus;
@@ -12,7 +13,8 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@CrossOrigin(origins = "*")
+
+
 @RestController
 @RequestMapping("/bookings")
 public class BookingController {
@@ -26,18 +28,37 @@ public class BookingController {
     }
 
     @PostMapping("/create")
-    public Booking createBooking(@RequestParam Long userId,
-                                 @RequestParam String time,
-                                 @RequestParam String service,
-                                 @RequestParam String barber) throws Exception {
+    public Booking createBooking(
+            @CookieValue(name = "jwt", required = false) String token,
+            @RequestParam String time,
+            @RequestParam String service,
+            @RequestParam String barber
+    ) throws Exception {
+
+        if (token == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Missing token");
+        }
+
+        Long userId = JwtUtil
+                .validateToken(token)
+                .getBody()
+                .get("userId", Long.class);
 
         LocalDateTime dateTime = LocalDateTime.parse(time);
         return bookingService.createBooking(userId, dateTime, service, barber);
     }
 
+    @GetMapping("/user")
+    public List<Booking> getMyBookings(@CookieValue(name = "jwt", required = false) String token) {
+        if (token == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Missing token");
+        }
 
-    @GetMapping("/user/{userId}")
-    public List<Booking> getUserBookings(@PathVariable Long userId) {
+        Long userId = JwtUtil
+                .validateToken(token)
+                .getBody()
+                .get("userId", Long.class);
+
         return bookingService.getUserBookings(userId);
     }
 
@@ -47,46 +68,61 @@ public class BookingController {
     }
 
     @GetMapping
-    public List<BookingDTO> getAllBookings(
-            @RequestHeader(value = "X-ROLE", required = false) String role
-    ) {
-        if (!"ADMIN".equals(role)) {
-            throw new ResponseStatusException(
-                    HttpStatus.UNAUTHORIZED,
-                    "Admins only"
-            );
+    public List<BookingDTO> getAllBookings(@CookieValue(name = "jwt", required = false) String token) {
+        if (token == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Missing token");
         }
+
+        String role = JwtUtil.validateToken(token).getBody().get("role", String.class);
+
+        if (!"ADMIN".equals(role)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Admins only");
+        }
+
         return bookingService.getAllBookings();
     }
-
 
     @PostMapping("/{id}/cancel")
     public void cancelBooking(
             @PathVariable Long id,
-            @RequestHeader(value = "X-ROLE", required = false) String role
+            @CookieValue(name = "jwt", required = false) String token
     ) throws Exception {
+
+        if (token == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Missing token");
+        }
+
+        String role = JwtUtil.validateToken(token).getBody().get("role", String.class);
+
         if (!"ADMIN".equals(role)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Admins only");
         }
+
         bookingService.cancelBooking(id);
     }
 
     @PutMapping("/{id}/cancel")
     public void cancelBookingByUser(
             @PathVariable Long id,
-            @RequestHeader(value = "X-USER-ID") Long userId
+            @CookieValue(name = "jwt", required = false) String token
     ) throws Exception {
+        if (token == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Missing token");
+        }
+
+        Long userId = JwtUtil.validateToken(token)
+                .getBody()
+                .get("userId", Long.class);
+
         Booking booking = bookingService.getBookingById(id);
 
         if (!booking.getUser().getUserId().equals(userId)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You can only cancel your own bookings");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,
+                    "You can only cancel your own bookings");
         }
 
         booking.setStatus(BookingStatus.CANCELLED);
         bookingService.updateBooking(booking);
     }
-
-
-
 
 }
