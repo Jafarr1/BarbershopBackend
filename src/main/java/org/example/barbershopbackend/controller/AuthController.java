@@ -26,19 +26,25 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<String> signup(
-            @RequestParam String name,
-            @RequestParam String phoneNumber,
-            @RequestParam String email,
-            @RequestParam String password) {
-
+    public ResponseEntity<?> signup(@RequestBody Map<String, String> body) {
         try {
-            String msg = authService.signup(name, phoneNumber, email, password);
-            return ResponseEntity.ok(msg);
+            String name = body.get("name");
+            String phoneNumber = body.get("phoneNumber");
+            String email = body.get("email");
+            String password = body.get("password");
+
+            if (name == null || phoneNumber == null || email == null || password == null) {
+                return ResponseEntity.badRequest().body("All fields are required");
+            }
+
+            authService.signup(name, phoneNumber, email, password);
+
+            return ResponseEntity.ok(Map.of("message", "Signup successful"));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
     }
+
 
 
     @PostMapping("/login")
@@ -62,9 +68,9 @@ public class AuthController {
             Cookie cookie = new Cookie("jwt", token);
             cookie.setHttpOnly(true);
             cookie.setPath("/");
-            cookie.setMaxAge(60 * 60); // 1 hour
-            cookie.setSecure(false); // for localhost
-            cookie.setDomain("localhost"); // optional
+            cookie.setMaxAge(60 * 60);
+            cookie.setSecure(false);
+            cookie.setDomain("localhost");
             response.addCookie(cookie);
 
             return ResponseEntity.ok(Map.of(
