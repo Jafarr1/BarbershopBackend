@@ -4,6 +4,7 @@ import org.example.barbershopbackend.controller.BookingController;
 import org.example.barbershopbackend.model.Booking;
 import org.example.barbershopbackend.model.ServiceType;
 import org.example.barbershopbackend.model.User;
+import org.example.barbershopbackend.security.JwtUtil;
 import org.example.barbershopbackend.service.BookingService;
 import org.example.barbershopbackend.service.TimeSlotService;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.mock.web.MockCookie;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -43,10 +45,14 @@ public class BookingControllerTest {
     @Test
     void getUserBookingsSuccess() throws Exception {
         User user = new User("Alice", "12345678", "alice@example.com", "pass");
-        Booking booking = new Booking(user, LocalDateTime.of(2025,12,31,12,30), ServiceType.HAARKLIP, "Mujji");
+        Booking booking = new Booking(user, LocalDateTime.of(2025, 12, 31, 12, 30), ServiceType.HAARKLIP, "Mujji");
         when(bookingService.getUserBookings(1L)).thenReturn(List.of(booking));
 
-        mockMvc.perform(get("/bookings/user/1"))
+
+        String token = JwtUtil.generateToken(1L, "USER", "alice@example.com");
+        MockCookie cookie = new MockCookie("jwt", token);
+
+        mockMvc.perform(get("/bookings/user").cookie(cookie))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].barber").value("Mujji"))
                 .andExpect(jsonPath("$[0].service").value("HAARKLIP"));
