@@ -72,7 +72,8 @@ public class AuthController {
 
             return ResponseEntity.ok(Map.of(
                     "userId", user.getUserId(),
-                    "role", user.getRole().name()
+                    "role", user.getRole().name(),
+                    "email", user.getEmail()
             ));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
