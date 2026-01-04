@@ -1,3 +1,5 @@
+//local host
+
 package org.example.barbershopbackend.model;
 
 import jakarta.persistence.*;
