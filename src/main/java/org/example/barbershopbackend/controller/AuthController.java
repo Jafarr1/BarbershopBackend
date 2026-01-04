@@ -14,6 +14,10 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.HashMap;
 import java.util.Map;
 
+@CrossOrigin(
+        origins = "https://jolly-plant-0835d5103.4.azurestaticapps.net",
+        allowCredentials = "true"
+)
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
