@@ -15,7 +15,12 @@ public class CorsConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:63342"));
+
+        config.setAllowedOrigins(List.of(
+                "http://localhost:63342",
+                "https://jolly-plant-0835d5103.4.azurestaticapps.net"
+        ));
+
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);

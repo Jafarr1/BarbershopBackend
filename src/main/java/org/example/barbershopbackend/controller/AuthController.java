@@ -14,7 +14,6 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.HashMap;
 import java.util.Map;
 
-@CrossOrigin(origins = "http://localhost:63342", allowCredentials = "true")
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
@@ -65,13 +64,11 @@ public class AuthController {
                     user.getEmail()
             );
 
-            Cookie cookie = new Cookie("jwt", token);
-            cookie.setHttpOnly(true);
-            cookie.setPath("/");
-            cookie.setMaxAge(60 * 60);
-            cookie.setSecure(false);
-            cookie.setDomain("localhost");
-            response.addCookie(cookie);
+            response.addHeader(
+                    "Set-Cookie",
+                    "jwt=" + token + "; Path=/; HttpOnly; Secure; SameSite=None"
+            );
+
 
             return ResponseEntity.ok(Map.of(
                     "userId", user.getUserId(),
