@@ -1,7 +1,6 @@
 package org.example.barbershopbackend.controller;
 
 import io.jsonwebtoken.Claims;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import org.example.barbershopbackend.model.User;
 import org.example.barbershopbackend.security.JwtUtil;
@@ -14,7 +13,6 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.HashMap;
 import java.util.Map;
 
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
