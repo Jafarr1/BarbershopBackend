@@ -5,6 +5,7 @@ import org.example.barbershopbackend.model.BookingStatus;
 import org.example.barbershopbackend.repository.BookingRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,17 +33,29 @@ public class TimeSlotService {
         return slots;
     }
 
-    public List<String> getAvailableSlots(String barber) {
+    public List<String> getAvailableSlots(String barber, LocalDate date) {
         List<String> allSlots = generateAllSlots();
 
+
         List<Booking> booked = bookingRepo
-                .findByStatusAndBarber(BookingStatus.BOOKED, barber);
+                .findByStatusAndBarber(BookingStatus.BOOKED, barber)
+                .stream()
+                .filter(b -> b.getAppointmentTime().toLocalDate().equals(date))
+                .collect(Collectors.toList());
 
         List<String> bookedTimes = booked.stream()
                 .map(b -> b.getAppointmentTime().toLocalTime().toString())
                 .collect(Collectors.toList());
 
         allSlots.removeAll(bookedTimes);
+
+
+        if (date.equals(LocalDate.now())) {
+            LocalTime now = LocalTime.now();
+            allSlots = allSlots.stream()
+                    .filter(timeStr -> LocalTime.parse(timeStr).isAfter(now))
+                    .collect(Collectors.toList());
+        }
 
         return allSlots;
     }

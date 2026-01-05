@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -63,8 +64,12 @@ public class BookingController {
     }
 
     @GetMapping("/available-slots")
-    public List<String> getAvailableSlots(@RequestParam String barber) {
-        return timeSlotService.getAvailableSlots(barber);
+    public List<String> getAvailableSlots(
+            @RequestParam String barber,
+            @RequestParam String date
+    ) {
+        LocalDate bookingDate = LocalDate.parse(date);
+        return timeSlotService.getAvailableSlots(barber, bookingDate);
     }
 
     @GetMapping
