@@ -2,6 +2,7 @@ package org.example.barbershopbackend.model;
 
 import jakarta.persistence.*;
 
+@Table(name = "app_user")
 @Entity
 public class User {
 
