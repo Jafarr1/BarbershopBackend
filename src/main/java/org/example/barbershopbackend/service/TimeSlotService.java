@@ -5,6 +5,7 @@ import org.example.barbershopbackend.model.BookingStatus;
 import org.example.barbershopbackend.repository.BookingRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -34,6 +35,11 @@ public class TimeSlotService {
     }
 
     public List<String> getAvailableSlots(String barber, LocalDate date) {
+
+        if (date.getDayOfWeek() == DayOfWeek.SUNDAY) {
+            return new ArrayList<>();
+        }
+
         List<String> allSlots = generateAllSlots();
 
 
